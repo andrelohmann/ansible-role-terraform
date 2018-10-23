@@ -10,8 +10,16 @@
 
 - name: Install unzip to unarchive terraform
   apt:
-    name: unzip
-    state: present
+    pkg: "{{ packages }}"
+    state: latest
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - unzip
 
 - name: Unarchive Terraform archive
   unarchive:
