@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: terraform
   author: andrelohmann
   description: ansible galaxy role to install terraform
   company: smartformer UG
