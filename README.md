@@ -1,5 +1,5 @@
 terraform
-=================
+=========
 
 [![Build Status](https://travis-ci.org/andrelohmann/ansible-role-terraform.svg?branch=master)](https://travis-ci.org/andrelohmann/ansible-role-terraform)
 
@@ -13,14 +13,14 @@ This role requires ubuntu.
 Role Variables
 --------------
 
-    terraform_version: 0.12.0
+    terraform_version: 0.12.6
 
 Example Playbook
 ----------------
 
     - hosts: terraform
       roles:
-         - { role: andrelohmann.terraform }
+         - andrelohmann.terraform
 
 License
 -------
