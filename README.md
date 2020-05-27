@@ -13,7 +13,7 @@ This role requires ubuntu.
 Role Variables
 --------------
 
-    terraform_version: 0.12.6
+    terraform_version: 0.12.24 #defaults to 'latest'
 
 Example Playbook
 ----------------
