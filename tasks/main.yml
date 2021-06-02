@@ -1,47 +1,26 @@
 ---
-- name: Install packages
-  apt:
-    name: "{{ packages }}"
-    state: latest
-    dpkg_options: 'force-confnew,force-confdef'
-    autoclean: yes
-    autoremove: yes
-    update_cache: yes
-    cache_valid_time: 3600
-  vars:
-    packages:
-    - curl
-    - jq
-    - unzip
 
-- name: extract latest version number
-  block:
-
-  - name: fetch latest terraform version
-    shell: curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version'
-    args:
-      executable: /bin/bash
-    register: latest_terraform_version
-
-  - name: set terraform_version
-    set_fact:
-      terraform_version: "{{ latest_terraform_version.stdout }}"
-
+- name: fetch latest terraform version
+  uri:
+    url: https://checkpoint-api.hashicorp.com/v1/check/terraform
+  register: terraform_latest_version
   when: terraform_version == "latest"
 
 - name: Check terraform version
-  shell: "terraform --version 2>&1 | grep {{ terraform_version }}"
+  command: "terraform --version -json"
   failed_when: false
   changed_when: false
-  register: terraform_versions_match
+  register: terraform_old_version
 
-- include: download.yml
-  when: terraform_versions_match.rc != 0
+- name: consolidate values
+  set_fact:
+    terraform_old_version: '{{ terraform_old_version.rc | ternary("", (terraform_old_version.stdout | default("0") | from_json).terraform_version) | default("") }}'
+    terraform_version: '{{ (terraform_version != "latest") | ternary(terraform_version, (terraform_latest_version.content | default("0") | from_json).current_version) }}'
 
-- name: Unarchive Terraform archive
+- name: Download and install terraform for {{ ansible_system }} on {{ ansible_architecture }}
   unarchive:
-    src: /tmp/terraform-{{terraform_version}}.zip
-    dest: "/usr/local/bin"
-    copy: no
-  when: terraform_versions_match.rc != 0
+    url: https://releases.hashicorp.com//terraform_{{ terraform_version }}_{{ ansible_system|lower }}_{{ terraform_supported_architecture[ansible_architecture] }}.zip
+    dest: "{{ terraform_dir }}"
+  when: (ansible_architecture in terraform_supported_architectures) and (terraform_old_version != terraform_version)
+
 ...

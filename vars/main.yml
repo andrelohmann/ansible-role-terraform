@@ -1,0 +1,10 @@
+---
+
+terraform_supported_architectures:
+  x86_64: "amd64"
+  i386: "386"
+  arm: "arm" #FIXME key guessed
+  arm64: "arm64" #FIXME key guessed
+terraform_dir: "/usr/local/bin"
+
+...
