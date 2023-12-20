@@ -3,18 +3,18 @@ galaxy_info:
   role_name: terraform
   author: andrelohmann
   description: ansible galaxy role to install terraform
-  company: smartformer UG
+  company: CloudCourse GmbH
 
   license: MIT
 
-  min_ansible_version: 2.7
+  min_ansible_version: "2.11"
 
   platforms:
-    - name: Ubuntu
-      versions:
-      - xenial
-      - bionic
-      - focal
+  - name: Ubuntu
+    versions:
+    - bionic
+    - focal
+    - jammy
 
   galaxy_tags:
   - terraform
