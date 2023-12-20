@@ -1,0 +1,20 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+
+  - name: Run terraform
+    ansible.builtin.shell: terraform --version
+    register: terraform_status
+
+  - name: Dump terraform status
+    ansible.builtin.debug:
+      var: terraform_status
+
+  - name: Assert terraform returns its version
+    ansible.builtin.assert:
+      that: terraform_status.stdout is search('Terraform')
+...

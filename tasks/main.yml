@@ -1,12 +1,13 @@
 ---
+
 - name: Install packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ packages }}"
-    state: latest
+    state: present
     dpkg_options: 'force-confnew,force-confdef'
-    autoclean: yes
-    autoremove: yes
-    update_cache: yes
+    autoclean: true
+    autoremove: true
+    update_cache: true
     cache_valid_time: 3600
   vars:
     packages:
@@ -14,34 +15,38 @@
     - jq
     - unzip
 
-- name: extract latest version number
+- name: Extract latest version number
+  when: terraform_version == "latest"
   block:
 
-  - name: fetch latest terraform version
-    shell: curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version'
+  - name: Fetch latest terraform version
+    ansible.builtin.shell: >
+      set -o pipefail && \
+      curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version'
     args:
       executable: /bin/bash
     register: latest_terraform_version
+    changed_when: false
 
-  - name: set terraform_version
-    set_fact:
+  - name: Set terraform_version
+    ansible.builtin.set_fact:
       terraform_version: "{{ latest_terraform_version.stdout }}"
 
-  when: terraform_version == "latest"
-
 - name: Check terraform version
-  shell: "terraform --version 2>&1 | grep {{ terraform_version }}"
+  ansible.builtin.shell: "set -o pipefail && terraform --version 2>&1 | grep {{ terraform_version }}"
   failed_when: false
-  changed_when: false
   register: terraform_versions_match
+  changed_when: false
 
-- include: download.yml
+- name: Download terraform
+  ansible.builtin.include_tasks: download.yml
   when: terraform_versions_match.rc != 0
 
 - name: Unarchive Terraform archive
-  unarchive:
-    src: /tmp/terraform-{{terraform_version}}.zip
+  ansible.builtin.unarchive:
+    src: /tmp/terraform-{{ terraform_version }}.zip
     dest: "/usr/local/bin"
-    copy: no
+    copy: false
   when: terraform_versions_match.rc != 0
+
 ...
