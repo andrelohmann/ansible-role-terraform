@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+  - name: "Include andrelohmann.terraform"
+    include_role:
+      name: "andrelohmann.terraform"
+...
