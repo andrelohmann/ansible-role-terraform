@@ -2,9 +2,9 @@
 - name: Converge
   hosts: all
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   tasks:
-  - name: "Include andrelohmann.terraform"
-    include_role:
+  - name: Include andrelohmann.terraform
+    ansible.builtin.include_role:
       name: "andrelohmann.terraform"
 ...

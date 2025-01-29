@@ -7,8 +7,9 @@
   tasks:
 
   - name: Run terraform
-    ansible.builtin.shell: terraform --version
+    ansible.builtin.command: terraform --version
     register: terraform_status
+    changed_when: false
 
   - name: Dump terraform status
     ansible.builtin.debug:
