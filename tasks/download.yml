@@ -1,7 +1,7 @@
 ---
 - name: Download terraform archive for Linux amd64 ar arm64
   ansible.builtin.get_url:
-    url: https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_{{ [ansible_architecture] | map('extract', terraform_deb_architecture) | first }}.zip
+    url: https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_{{ [ansible_facts["architecture"]] | map('extract', terraform_deb_architecture) | first }}.zip
     dest: /tmp/terraform-{{ terraform_version }}.zip
     owner: root
     group: root
